@@ -22,7 +22,7 @@ hpc_full[6840, ]
 # convert dates .. -- do it now
 hpc_full$dtc <- paste(as.character(hpc_full$Date), as.character(hpc_full$Time))
 hpc_full$dtp <- as.POSIXlt(hpc_full$dtc, format="%d/%m/%Y %T")
-hpc_full$wd <- weekdays(hpc_full$dtp)
+# hpc_full$wd <- weekdays(hpc_full$dtp) # not necessary
 
 # select subset
 hpc <- hpc_full[which(hpc_full$dtp >= as.POSIXlt("2007-02-01 00:00:00") & hpc_full$dtp < as.POSIXlt("2007-02-03 00:00:00")), ]
@@ -31,36 +31,43 @@ hpc <- hpc_full[which(hpc_full$dtp >= as.POSIXlt("2007-02-01 00:00:00") & hpc_fu
 head(hpc, 3)
 tail(hpc, 3)
 
-# first tests for plotting
-hist(Global_active_power)
-hist(Global_active_power, xlab="Global Active Power (kilowatts)")
-hist(Global_active_power, xlab="Global Active Power (kilowatts)", main="Global Active Power")
-
-# plot(dtp, Global_active_power)
-plot(dtp, Global_active_power, type="l")
-plot(dtp, Global_active_power, type="l", xlab="", ylab="Global Active Power (kilowatts)") # for the first ok / days shold be english
-
-# set locale
+# set locale -- necessary on german system e.g. to get englisch weekday names, see below
 Sys.setlocale(category = "LC_TIME", locale = "C") # set locale 
 # Sys.setlocale(category = "LC_ALL", locale = "") # reset locale -- do this later
 
-plot(dtp, Global_active_power, type="l", xlab="", ylab="Global Active Power (kilowatts)") # now the plot is ok
+# tests for plot 1
+hist(Global_active_power)
+hist(Global_active_power, xlab="Global Active Power (kilowatts)")
+hist(Global_active_power, xlab="Global Active Power (kilowatts)", main="Global Active Power") 
 
+# plot 1
+hist(Global_active_power, col="red", xlab="Global Active Power (kilowatts)", main="Global Active Power")
+
+# tests for plot 2 + plot 2
+# for english weekday names locale must be set. this wwas done above
+plot(dtp, Global_active_power)
+plot(dtp, Global_active_power, type="l")
+plot(dtp, Global_active_power, type="l", xlab="", ylab="Global Active Power (kilowatts)")
+
+# plot 3
 plot(dtp, Sub_metering_1, type="l", xlab="", ylab="Energy sub metering")
 lines(dtp, Sub_metering_2, col="red")
 lines(dtp, Sub_metering_3, col="blue")
 legend("topright", lty=1, col=c("black", "red", "blue"), legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
 
+# tests for subplots to plot 4
 plot(dtp, Voltage, type="l", xlab="datetime") # subplot
 plot(dtp, Global_reactive_power, type="l", xlab="datetime") # subplot
 
-par(mfrow = c(2,2))
-plot(dtp, Global_active_power, type="l", xlab="", ylab="Global Active Power (kilowatts)") # subplot 1
+# plot 4
+par(mfrow = c(2,2)) # grid for subplots
+plot(dtp, Global_active_power, type="l", xlab="", ylab="Global Active Power") # subplot 1
 plot(dtp, Voltage, type="l", xlab="datetime") # subplot 2
 plot(dtp, Sub_metering_1, type="l", xlab="", ylab="Energy sub metering") # start subplot 3
 lines(dtp, Sub_metering_2, col="red")
 lines(dtp, Sub_metering_3, col="blue")
 legend("topright", lty=1, col=c("black", "red", "blue"), legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
 plot(dtp, Global_reactive_power, type="l", xlab="datetime") # subplot 4
+par(mfrow=c(1,1)) # reset grit
 
-
+Sys.setlocale(category = "LC_ALL", locale = "") # reset locale
